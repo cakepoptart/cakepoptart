@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>SISTEMA DE SEGURANÇA</title>
+    <style>
+        body { background: #000; color: #00ff00; font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { border: 1px solid #00ff00; padding: 20px; text-align: center; background: rgba(0,20,0,0.9); box-shadow: 0 0 15px #00ff00; }
+        h2 { color: red; margin-top: 0; }
+        .info { text-align: left; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>CONEXÃO MONITORADA</h2>
+        <div id="status">Buscando rastro digital...</div>
+        <div id="dados" class="info"></div>
+    </div>
+
+    <script>
+        async function buscarDados() {
+            const display = document.getElementById('dados');
+            const status = document.getElementById('status');
+            
+            // Tentativa 1: API Principal
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const d = await res.json();
+                status.innerText = "DADOS ENCONTRADOS:";
+                display.innerHTML = `IP: ${d.ip}<br>CIDADE: ${d.city}<br>ESTADO: ${d.region}<br>PROVEDOR: ${d.org}`;
+            } catch (e) {
+                // Tentativa 2: API de Backup
+                try {
+                    const res2 = await fetch('https://ipwho.is/');
+                    const d2 = await res2.json();
+                    status.innerText = "DADOS ENCONTRADOS (Backup):";
+                    display.innerHTML = `IP: ${d2.ip}<br>CIDADE: ${d2.city}<br>PROVEDOR: ${d2.connection.isp}`;
+                } catch (e2) {
+                    status.innerHTML = "<span style='color:yellow;'>ERRO DE NAVEGADOR</span><br><br>O seu navegador bloqueou o rastreio local.<br>Para funcionar, você precisa subir o site no GitHub ou Vercel.";
+                }
+            }
+        }
+        buscarDados();
+    </script>
+</body>
+</html>
